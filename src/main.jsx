@@ -56,6 +56,9 @@ import './styles.css';
 
 const API_URL = import.meta.env.VITE_REK_API_URL || '';
 
+// Base path untuk GitHub Pages repository deployment.
+const APP_BASE = import.meta.env.BASE_URL || '/';
+
 // ============================================================================
 // 03. DATA KANDIDAT & KRITERIA
 // ============================================================================
@@ -1084,7 +1087,7 @@ function MemberPortal() {
       {/* ------------------------------------------------------------------ */}
       <header className="topbar">
         <div className="brand">
-          <img className="brand-logo" src="/logo-pmr-smanel.jpg" alt="Logo PMR SMANEL" />
+          <img className="brand-logo" src={`${APP_BASE}logo-pmr-smanel.jpg`} alt="Logo PMR SMANEL" />
           <div>
             <strong>PMR SMANEL</strong>
             <span>PALANG MERAH REMAJA</span>
@@ -1506,7 +1509,7 @@ function AdminLogin({ onLogin }) {
     <div className="admin-login-page">
       <div className="login-card">
         <div className="brand">
-          <img className="brand-logo" src="/logo-pmr-smanel.jpg" alt="Logo PMR SMANEL" />
+          <img className="brand-logo" src={`${APP_BASE}logo-pmr-smanel.jpg`} alt="Logo PMR SMANEL" />
           <div>
             <strong>PMR SMANEL</strong>
             <span>ADMIN PANEL 2026/2027</span>
@@ -1540,7 +1543,7 @@ function AdminLogin({ onLogin }) {
           {loading ? 'Memeriksa...' : 'Masuk Admin'}
         </button>
 
-        <a href="/">Kembali ke Portal</a>
+        <a href={APP_BASE}>Kembali ke Portal</a>
       </div>
     </div>
   );
@@ -1785,7 +1788,7 @@ function AdminPortal() {
       {/* ------------------------------------------------------------------ */}
       <header className="admin-top">
         <div className="brand">
-          <img className="brand-logo" src="/logo-pmr-smanel.jpg" alt="Logo PMR SMANEL" />
+          <img className="brand-logo" src={`${APP_BASE}logo-pmr-smanel.jpg`} alt="Logo PMR SMANEL" />
           <div>
             <strong>PMR SMANEL</strong>
             <span>ADMIN REKOMENDASI 2026/2027</span>
@@ -1793,7 +1796,7 @@ function AdminPortal() {
         </div>
 
         <div className="admin-top-actions">
-          <a href="/" className="back-link">
+          <a href={APP_BASE} className="back-link">
             Portal Anggota
           </a>
 
