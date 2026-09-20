@@ -566,6 +566,7 @@ button,input {
   font-size:24px;
   font-weight:800;
 }
+
 /* ---------------------------------------------------------------------------
  * 07A. FOTO KANDIDAT DI MODAL PENILAIAN
  * ------------------------------------------------------------------------- */
@@ -2291,5 +2292,23 @@ footer {
 
   .auto-token-info {
     min-width:0;
+  }
+}
+
+/* ============================================================================
+ * 11A. MOBILE MODAL — KEEP CANDIDATE HEADER VISIBLE
+ * -------------------------------------------------------------------------- */
+@media (max-width: 680px) {
+  .overlay {
+    z-index: 1000;
+    align-items: flex-start;
+    padding: 76px 10px 16px;
+    overflow-y: auto;
+  }
+
+  .modal {
+    width: 100%;
+    max-height: calc(100vh - 92px);
+    margin: 0 auto;
   }
 }
