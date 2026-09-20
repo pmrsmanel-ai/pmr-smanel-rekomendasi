@@ -2312,3 +2312,85 @@ footer {
     margin: 0 auto;
   }
 }
+
+
+/* ============================================================================
+ * 14. MOBILE HERO — PREVENT OVERLAP
+ * --------------------------------------------------------------------------
+ * Pada layar HP, kartu "Penilaian anonim" tidak lagi diposisikan absolute.
+ * Hero menjadi aliran vertikal sehingga teks, statistik, dan status polling
+ * tidak saling menimpa.
+ * ========================================================================== */
+@media (max-width: 680px) {
+  .hero {
+    min-height: auto !important;
+    height: auto !important;
+    padding: 28px 18px 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 16px !important;
+  }
+
+  .hero-copy {
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: 0 !important;
+  }
+
+  .hero h1 {
+    font-size: 37px !important;
+    line-height: 1 !important;
+  }
+
+  .hero p {
+    max-width: none !important;
+  }
+
+  .hero-actions {
+    flex-wrap: wrap !important;
+  }
+
+  .hero-btn {
+    flex: 1 1 150px !important;
+  }
+
+  .stats {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    margin-top: 12px !important;
+  }
+
+  .stats div {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 9px 7px !important;
+  }
+
+  .stats strong {
+    font-size: 17px !important;
+  }
+
+  .stats span {
+    line-height: 1.2 !important;
+  }
+
+  .stats small {
+    line-height: 1.15 !important;
+  }
+
+  .hero-card {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 13px 14px !important;
+    border-radius: 16px !important;
+    flex: 0 0 auto !important;
+  }
+}
