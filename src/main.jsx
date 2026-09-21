@@ -820,48 +820,57 @@ function MemberPortal() {
   }, []);
 
   // ---------------------------------------------------------------------------
-  // 06B. SEARCH
-  // ---------------------------------------------------------------------------
+// 06B. SORT & SEARCH
+// ---------------------------------------------------------------------------
 
-  const filteredCandidates = useMemo(() => {
-    const query = searchQuery.toLowerCase().trim();
-
-    if (!query) return candidates;
-
-    return candidates.filter((candidate) =>
-      candidate.name.toLowerCase().includes(query),
-    );
-  }, [candidates, searchQuery]);
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredCandidates.length / PAGE_SIZE),
+const sortedCandidates = useMemo(() => {
+  return [...candidates].sort((a, b) =>
+    a.name.localeCompare(b.name, 'id', {
+      sensitivity: 'base',
+    })
   );
+}, [candidates]);
 
-  const paginatedCandidates = useMemo(() => {
-    const startIndex = (currentPage - 1) * PAGE_SIZE;
+const filteredCandidates = useMemo(() => {
+  const query = searchQuery.toLowerCase().trim();
 
-    return filteredCandidates.slice(
-      startIndex,
-      startIndex + PAGE_SIZE,
-    );
-  }, [filteredCandidates, currentPage]);
+  if (!query) return sortedCandidates;
 
+  return sortedCandidates.filter((candidate) =>
+    candidate.name.toLowerCase().includes(query)
+  );
+}, [sortedCandidates, searchQuery]);
+
+const totalPages = Math.max(
+  1,
+  Math.ceil(filteredCandidates.length / PAGE_SIZE),
+);
+
+const paginatedCandidates = useMemo(() => {
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = Math.min(
+
+  return filteredCandidates.slice(
+    startIndex,
     startIndex + PAGE_SIZE,
-    filteredCandidates.length,
   );
+}, [filteredCandidates, currentPage]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery]);
+const startIndex = (currentPage - 1) * PAGE_SIZE;
 
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
+const endIndex = Math.min(
+  startIndex + PAGE_SIZE,
+  filteredCandidates.length,
+);
+
+useEffect(() => {
+  setCurrentPage(1);
+}, [searchQuery]);
+
+useEffect(() => {
+  if (currentPage > totalPages) {
+    setCurrentPage(totalPages);
+  }
+}, [currentPage, totalPages]);
 
   // ---------------------------------------------------------------------------
   // 06C. PILIH / BATALKAN KANDIDAT
