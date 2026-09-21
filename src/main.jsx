@@ -790,10 +790,31 @@ function MemberPortal() {
   const [submitted, setSubmitted] = useState(
     () => hasSubmittedVote()
   );
+  const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   const PAGE_SIZE = 8;
+
+  // ---------------------------------------------------------------------------
+// 06A-1. PERLINDUNGAN SAAT PENGIRIMAN
+// ---------------------------------------------------------------------------
+
+useEffect(() => {
+  const handleBeforeUnload = (event) => {
+    if (!submitting) return;
+
+    event.preventDefault();
+    event.returnValue =
+      'Penilaian sedang dikirim. Jangan refresh atau tutup halaman.';
+  };
+
+  window.addEventListener('beforeunload', handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+  };
+}, [submitting]);
 
   // ---------------------------------------------------------------------------
   // 06A. LOAD DATA AWAL
@@ -1035,6 +1056,10 @@ useEffect(() => {
   async function submitRatings() {
     setMessage('');
 
+    if (submitting) {
+      return;
+    }
+
     if (pollingStatus !== 'OPEN') {
       setMessage('Polling belum dibuka.');
       return;
@@ -1044,6 +1069,11 @@ useEffect(() => {
       setMessage('Pilih tepat 5 kandidat dan lengkapi semua 8 penilaian.');
       return;
     }
+
+    setSubmitting(true);
+    setMessage(
+      '⏳ Sedang mengirim penilaian... Jangan klik kembali atau refresh halaman.',
+    );
 
     try {
       await apiPost({
@@ -1064,15 +1094,12 @@ useEffect(() => {
       clearVoteToken();
       setToken('');
       setTokenExpiresAt('');
+      setActiveCandidateId(null);
       setMessage(
-        'Penilaian berhasil disimpan. Token anonim telah digunakan.',
+        'Penilaian berhasil dikirim. Terima kasih sudah berpartisipasi.',
       );
     } catch (error) {
-
-      if (
-        error.message ===
-        'PENILAIAN_SUDAH_DIKIRIM'
-      ) {
+      if (error.message === 'PENILAIAN_SUDAH_DIKIRIM') {
         setSubmitted(true);
         markVoteSubmitted();
         clearVoteToken();
@@ -1080,12 +1107,14 @@ useEffect(() => {
         setTokenExpiresAt('');
         setActiveCandidateId(null);
         setMessage(
-          'Penilaian kamu sudah dikirim. Token anonim ini tidak dapat digunakan lagi.'
+          'Penilaian kamu sudah dikirim sebelumnya. Data tidak dikirim ulang.',
         );
         return;
       }
 
       setMessage(error.message);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -1463,9 +1492,13 @@ useEffect(() => {
           <button
             className="btn primary"
             onClick={submitRatings}
-            disabled={!canSubmit || claimingToken || submitted}
+            disabled={!canSubmit || claimingToken || submitted || submitting}
           >
-            {submitted ? 'Sudah Terkirim' : 'Kirim Penilaian'}
+            {submitting
+              ? '⏳ Sedang Mengirim...'
+              : submitted
+                ? 'Sudah Terkirim'
+                : 'Kirim Penilaian'}
           </button>
         </div>
       </section>
@@ -1474,7 +1507,13 @@ useEffect(() => {
       {/* 06O. NOTIFIKASI                                                   */}
       {/* ------------------------------------------------------------------ */}
       {message && (
-        <div className={message.includes('berhasil') ? 'toast success' : 'toast'}>
+        <div
+          className={
+            message.includes('berhasil') || message.includes('Sedang')
+              ? 'toast success'
+              : 'toast'
+          }
+        >
           {message}
         </div>
       )}
