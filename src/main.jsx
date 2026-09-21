@@ -1060,13 +1060,40 @@ useEffect(() => {
       return;
     }
 
+    if (submitted) {
+      setMessage('Penilaian sudah dikirim dan tidak dapat dikirim ulang.');
+      return;
+    }
+
     if (pollingStatus !== 'OPEN') {
       setMessage('Polling belum dibuka.');
       return;
     }
 
-    if (!canSubmit) {
-      setMessage('Pilih tepat 5 kandidat dan lengkapi semua 8 penilaian.');
+    if (claimingToken) {
+      setMessage('Token anonim masih sedang disiapkan. Silakan tunggu.');
+      return;
+    }
+
+    if (!token) {
+      setMessage('Token anonim belum siap. Silakan buka penilaian kandidat terlebih dahulu.');
+      return;
+    }
+
+    if (selectedCandidates.length !== 5) {
+      setMessage(`Pilih tepat 5 kandidat. Saat ini baru ${selectedCandidates.length} kandidat terpilih.`);
+      return;
+    }
+
+    const incompleteCandidate = selectedCandidates.find((candidateId) =>
+      criteria.some((_, criterionIndex) => scores[candidateId]?.[criterionIndex] < 1),
+    );
+
+    if (incompleteCandidate) {
+      const candidate = candidates.find((item) => item.id === incompleteCandidate);
+      setMessage(
+        `Lengkapi 8 penilaian untuk ${candidate?.name || 'kandidat yang dipilih'} sebelum mengirim.`,
+      );
       return;
     }
 
@@ -1492,7 +1519,7 @@ useEffect(() => {
           <button
             className="btn primary"
             onClick={submitRatings}
-            disabled={!canSubmit || claimingToken || submitted || submitting}
+            disabled={claimingToken || submitted || submitting}
           >
             {submitting
               ? '⏳ Sedang Mengirim...'
